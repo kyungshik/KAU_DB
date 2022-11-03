@@ -1,0 +1,164 @@
+import java.sql.*;
+import java.util.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class Interface extends JFrame {
+    private static final String url = "jdbc:mysql://localhost:3306/mydb";
+    private static final String user = "root";
+    private static final String password = "1234";
+
+    public Interface() {
+        //Frame 초기 설정
+        setSize(1500, 700);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setVisible(true);
+
+        //panel1 : JLabel(검색범위), JComboBox(전체, 부서별)
+        //  1)  패널 생성
+        JPanel panel1 = new JPanel();
+        //  2)  FlowLayout -> 왼쪽에서 오른쪽으로 순서대로
+        panel1.setLayout(new FlowLayout(FlowLayout.LEFT));
+        //  3)  JLabel(검색범위)
+        JLabel searchLabel = new JLabel("검색 범위");
+        //  4)  JComboBox(전체, 부서별)
+        String[] SearchLabel = {"전체", "부서별"};
+        JComboBox sortBy;
+        sortBy = new JComboBox(SearchLabel);
+        // 5)   생성한 패널에 searchLabel, sortBy 추가
+        panel1.add(searchLabel);
+        panel1.add(sortBy);
+
+        //panel2 : JLabel(검색항목), JCheckBox(Attributes), JButton(쿼리실행)
+        //  1) 패널 생성
+        JPanel panel2 = new JPanel();
+        //  2)  FlowLayout -> 왼쪽에서 오른쪽으로 순서대로
+        panel2.setLayout(new FlowLayout(FlowLayout.LEFT));
+        //  3)  JLabel(검색항목)
+        JLabel items = new JLabel("검색 항목");
+        //  4) JCheckBox(Attributes)
+        JCheckBox items1 = new JCheckBox("Name", true);
+        JCheckBox items2 = new JCheckBox("Ssn", true);
+        JCheckBox items3 = new JCheckBox("Bdate", true);
+        JCheckBox items4 = new JCheckBox("Address", true);
+        JCheckBox items5 = new JCheckBox("Sex", true);
+        JCheckBox items6 = new JCheckBox("Salary", true);
+        JCheckBox items7 = new JCheckBox("Supervisor", true);
+        JCheckBox items8 = new JCheckBox("Department", true);
+        //  5) JButton -> 검색 Action 수행
+        JButton searchButton = new JButton("검색");
+        //  6)  생성한 패널에 Label, JCheckBox, JButton 추가
+        panel2.add(items);
+        panel2.add(items1);
+        panel2.add(items2);
+        panel2.add(items3);
+        panel2.add(items4);
+        panel2.add(items5);
+        panel2.add(items6);
+        panel2.add(items7);
+        panel2.add(items8);
+        panel2.add(searchButton);
+
+        //[1] above : panel1 + panel2 -> 맨위에 들어갈 기능
+        JPanel above = new JPanel();
+        above.setLayout(new BoxLayout(above, BoxLayout.Y_AXIS));
+        above.add(panel1);
+        above.add(panel2);
+        add(above, BorderLayout.NORTH);
+
+        //panel3 : JLabel("선택한 직원"), JLabel(직원 수 출력) -> 선택한 직원을 출력합니다.
+        //  1) 패널 생성
+        JPanel panel3 = new JPanel();
+        //  2)  FlowLayout -> 왼쪽에서 오른쪽으로 순서대로
+        panel3.setLayout(new FlowLayout(FlowLayout.LEFT));
+        //  3) JLabel(선택한 직원 txt)
+        JLabel selectText = new JLabel("선택한 직원: ");
+        //  4) JLabel(선택한 직원 출력) -> Action 수행
+        JLabel selectedData = new JLabel();
+        selectedData.setText("선택한 직원을 출력합니다.");
+        //  5) 생성한 패널에 EmpLabel, selectedData 추가
+        panel3.add(selectText);
+        panel3.add(selectedData);
+
+        //panel4 : 인원수를 cnt하기
+        //  1) 패널 생성
+        JPanel panel4 = new JPanel();
+        //  2)  FlowLayout -> 왼쪽에서 오른쪽으로 순서대로
+        panel4.setLayout(new FlowLayout());
+        //  3) JLabel(인원수 txt)
+        JLabel cntTxt = new JLabel("인원수: ");
+        //  4) JLabel(인원수 출력) -> Action 수행
+        JLabel cntData = new JLabel();
+        cntData.setText("인원수를 출력합니다");
+        //  5) JLabel(수정: txt)
+        JLabel editTxt = new JLabel("수정:");
+        //  6) JComboBox(부서 선택)
+        String[] department = {"Research", "Administration", "Headquarters"};
+        JComboBox dptSort;
+        dptSort = new JComboBox(department);
+        //  7) JButton -> UPDATE Action 수행
+        JButton updateButton = new JButton("UPDATE");
+        //  8) JButton -> DELETE Action 수행
+        JButton deleteButton = new JButton("선택한 데이터 삭제");
+        //  9) J 기능 추가
+        panel4.add(cntTxt);
+        panel4.add(cntData);
+        panel4.add(editTxt);
+        panel4.add(dptSort);
+        panel4.add(updateButton);
+        panel4.add(deleteButton);
+
+        //[2] below : panel4
+        JPanel below = new JPanel();
+        below.setLayout(new FlowLayout());
+        below.add(panel3);
+        below.add(panel4);
+        add(below, BorderLayout.SOUTH);
+    }
+
+
+    class ListenerClass implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.out.println("asd");
+
+        }
+    }
+
+    public static void main(String[] args) {
+//        try (Connection conn = getConnection()) {
+//            System.out.println("정상적으로 연결되었습니다.");
+//            runSQL(conn);
+//        } catch (SQLException e) {
+//            System.out.printf("연결할 수 없습니다.");
+//            e.printStackTrace();
+//        }
+
+        new Interface();
+    }
+
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(url, user, password);
+    }
+
+    public static void runSQL(Connection conn) throws SQLException {
+        try (Statement stmt = conn.createStatement()) {
+            getResult(stmt);
+        }
+    }
+
+    private static void getResult(Statement stmt) throws SQLException {
+        String sql = "SELECT Fname, Salary FROM EMPLOYEE WHERE sex = 'M'";
+        String fname;
+        double salary;
+        try (ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                fname = rs.getString(1);
+                salary = rs.getDouble("salary");
+                System.out.printf("Fname : %s Salary : %f\n", fname, salary);
+            }
+        }
+    }
+}
